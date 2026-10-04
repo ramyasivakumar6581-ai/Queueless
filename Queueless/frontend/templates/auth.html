@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ role|capitalize }} {{ 'Login' if mode == 'login' else 'Register' }}{% endblock %}
+{% block content %}
+<div class="auth">
+  <img src="{{ url_for('static', filename='images/bank.jpg') }}" alt="Bank building">
+  <div class="card">
+    <h2>{{ role|capitalize }} {{ 'Login' if mode == 'login' else 'Register' }} {{ '🧑‍💼' if role == 'user' else '👔' }}</h2>
+    <form method="post" autocomplete="off">
+      <label>Username</label>
+      <input name="username" value="{{ username }}" placeholder="Username" required {% if mode == 'register' %}minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+"{% endif %}>
+      {% if mode == 'register' %}<div class="hint">3-30 characters: letters, numbers and _</div>{% endif %}
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Password" required {% if mode == 'register' %}minlength="6"{% endif %}>
+      {% if mode == 'register' %}
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" placeholder="Confirm password" required minlength="6">
+        {% if role == 'admin' %}
+          <label>Admin Secret Key</label>
+          <input type="password" name="admin_key" placeholder="Secret key" required>
+          <div class="hint">Only authorized staff receive this key.</div>
+        {% endif %}
+      {% endif %}
+      <button class="btn block" type="submit">{{ 'Login' if mode == 'login' else 'Create Account' }}</button>
+    </form>
+    <p class="links2">
+      {% if mode == 'login' %}New here? <a href="{{ url_for(role ~ '_register') }}">Register</a>
+      {% else %}Already registered? <a href="{{ url_for(role ~ '_login') }}">Login</a>{% endif %}
+      · <a href="{{ url_for('home') }}">Home</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

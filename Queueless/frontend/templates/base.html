@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Smart Virtual Queue{% endblock %} | QueueLess</title>
+<link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="QueueLess logo"></a>
+  <div class="links">
+    {% if session.role == 'user' %}
+      <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('book_token') }}">Book Token</a>
+      <a href="{{ url_for('view_token') }}">My Tokens</a>
+      <a href="{{ url_for('notifications') }}">Notifications</a>
+    {% elif session.role == 'admin' %}
+      <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('reports') }}">Reports</a>
+      <a href="{{ url_for('analytics') }}">Analytics</a>
+      <a href="{{ url_for('notifications') }}">Notifications</a>
+      <a href="{{ url_for('settings') }}">Settings</a>
+    {% else %}
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('register') }}">Register</a>
+      <a href="{{ url_for('user_login') }}">User Login</a>
+      <a href="{{ url_for('admin_login') }}">Admin Login</a>
+    {% endif %}
+    {% if session.role %}<a class="btn sm ghost" href="{{ url_for('logout') }}">Logout ({{ session.username }})</a>{% endif %}
+  </div>
+</nav>
+<main class="wrap">
+  {% with msgs = get_flashed_messages(with_categories=true) %}{% for c, m in msgs %}<div class="flash {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer>© QueueLess · Smart Virtual Queue Management</footer>
+</body>
+</html>

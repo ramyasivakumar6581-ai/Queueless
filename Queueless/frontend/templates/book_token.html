@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Book Token{% endblock %}
+{% block content %}
+<div class="card" style="max-width:620px;margin:0 auto">
+  <h2>Book Your Token 🏦</h2>
+  <form method="post">
+    <div class="row">
+      <div><label>State</label><input name="state" value="Tamil Nadu" required></div>
+      <div><label>District</label><input name="district" placeholder="e.g. Chennai" required></div>
+    </div>
+    <div class="row">
+      <div><label>Bank</label>
+        <select name="bank" id="bank" required><option value="">Select bank</option>
+          {% for b in banks %}<option>{{ b.name }}</option>{% endfor %}</select></div>
+      <div><label>Branch</label><select name="branch" id="branch" required><option value="">Select bank first</option></select></div>
+    </div>
+    <label>Service</label>
+    <select name="service" required><option value="">Select service</option>
+      {% for s in services %}<option value="{{ s.name }}">{{ s.name }} (~{{ s.duration }} min)</option>{% endfor %}</select>
+    <div class="row">
+      <div><label>Date</label><input type="date" name="token_date" min="{{ today }}" value="{{ today }}" required></div>
+      <div><label>Time</label><input type="time" name="token_time" required></div>
+    </div>
+    <button class="btn block" type="submit">Book Token ✅</button>
+  </form>
+  <p style="margin-top:14px"><a href="{{ url_for('user_dashboard') }}">← Back to Dashboard</a></p>
+</div>
+<script>
+const branches = {{ branches|tojson }};
+const bank = document.getElementById('bank'), branch = document.getElementById('branch');
+bank.addEventListener('change', () => {
+  branch.replaceChildren(new Option('Select branch', ''));
+  branches.filter(b => b.bank === bank.value).forEach(b => branch.add(new Option(b.name + ' - ' + b.location, b.name)));
+});
+</script>
+{% endblock %}

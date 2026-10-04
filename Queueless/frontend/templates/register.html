@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="card" style="max-width:560px;margin:10px auto;text-align:center">
+  <h2>Create your account</h2>
+  <p>Who are you registering as?</p>
+  <div class="grid">
+    <a class="card tile" href="{{ url_for('user_register') }}"><div class="ic">🧑‍💼</div><h3>User</h3><p>Book and track tokens</p></a>
+    <a class="card tile" href="{{ url_for('admin_register') }}"><div class="ic">👔</div><h3>Admin</h3><p>Manage branches and queues</p></a>
+  </div>
+  <p class="links2">Already registered? <a href="{{ url_for('user_login') }}">User Login</a> · <a href="{{ url_for('admin_login') }}">Admin Login</a></p>
+</div>
+{% endblock %}

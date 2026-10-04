@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card hero">
+  <div>
+    <h1>Skip the line.<br><span>Not the service.</span></h1>
+    <p>Book your bank token online, see your live position in the queue and get notified when it is your turn. No more waiting in crowded branches.</p>
+    <div class="actions">
+      <a class="btn" href="{{ url_for('user_login') }}">User Login</a>
+      <a class="btn green" href="{{ url_for('admin_login') }}">Admin Login</a>
+      <a class="btn ghost" href="{{ url_for('register') }}">Register</a>
+    </div>
+  </div>
+  <img src="{{ url_for('static', filename='images/bank.jpg') }}" alt="Bank building with coins">
+</section>
+<div class="grid">
+  <div class="card feature"><div class="ic">📝</div><h3>Book digitally</h3><p>Choose bank, branch, service, date and time in seconds.</p></div>
+  <div class="card feature"><div class="ic">⏱️</div><h3>Live queue position</h3><p>See how many people are ahead of you and the estimated wait.</p></div>
+  <div class="card feature"><div class="ic">🔔</div><h3>Instant notifications</h3><p>Get updates the moment the branch serves or changes your token.</p></div>
+  <div class="card feature"><div class="ic">📊</div><h3>Admin insights</h3><p>Reports, analytics and CSV export for every bank and branch.</p></div>
+</div>
+{% endblock %}

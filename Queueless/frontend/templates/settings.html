@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h1>⚙️ Settings</h1>
+<div class="tabs">
+  {% for key, label in [('banks','🏦 Banks'),('branches','🏛 Branches'),('services','🔧 Services'),('admins','👥 Admins'),('system','⚙️ System')] %}
+  <button type="button" data-tab="{{ key }}" class="{{ 'on' if tab == key }}">{{ label }}</button>{% endfor %}
+</div>
+
+<div class="pane {{ 'on' if tab == 'banks' }}" id="banks"><div class="cols">
+  <div class="card"><h3>Add bank</h3><form method="post" action="{{ url_for('add_bank') }}">
+    <label>Bank name</label><input name="bank_name" required><label>Bank code</label><input name="bank_code" placeholder="e.g. SBIN" required>
+    <button class="btn block">➕ Add Bank</button></form></div>
+  <div class="card"><h3>Banks</h3>{% for b in banks %}<div class="item"><div>{{ b.name }} <small>{{ b.code }}</small></div><form method="post" action="{{ url_for('delete_item', kind='bank', item_id=b.id) }}" onsubmit="return confirm('Delete this bank and all its branches?')"><button class="btn red sm">🗑️</button></form></div>{% else %}<p class="empty">No banks.</p>{% endfor %}</div>
+</div></div>
+
+<div class="pane {{ 'on' if tab == 'branches' }}" id="branches"><div class="cols">
+  <div class="card"><h3>Add branch</h3><form method="post" action="{{ url_for('add_branch') }}">
+    <label>Bank</label><select name="bank_id" required><option value="">Choose bank</option>{% for b in banks %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}</select>
+    <label>Branch name</label><input name="branch_name" required><label>Location</label><input name="location" placeholder="City / area" required>
+    <button class="btn block">➕ Add Branch</button></form></div>
+  <div class="card"><h3>Branches</h3>{% for r in branches %}<div class="item"><div>{{ r.name }} <small>{{ r.bank }} · {{ r.location }}</small></div><form method="post" action="{{ url_for('delete_item', kind='branch', item_id=r.id) }}" onsubmit="return confirm('Delete?')"><button class="btn red sm">🗑️</button></form></div>{% else %}<p class="empty">No branches.</p>{% endfor %}</div>
+</div></div>
+
+<div class="pane {{ 'on' if tab == 'services' }}" id="services"><div class="cols">
+  <div class="card"><h3>Add service</h3><form method="post" action="{{ url_for('add_service') }}">
+    <label>Service name</label><input name="service_name" required><label>Average duration (minutes)</label><input type="number" name="duration" min="1" value="5" required>
+    <div class="hint">Used to estimate the waiting time shown to customers.</div>
+    <button class="btn block">➕ Add Service</button></form></div>
+  <div class="card"><h3>Services</h3>{% for s in services %}<div class="item"><div>{{ s.name }} <small>{{ s.duration }} min</small></div><form method="post" action="{{ url_for('delete_item', kind='service', item_id=s.id) }}" onsubmit="return confirm('Delete?')"><button class="btn red sm">🗑️</button></form></div>{% else %}<p class="empty">No services.</p>{% endfor %}</div>
+</div></div>
+
+<div class="pane {{ 'on' if tab == 'admins' }}" id="admins"><div class="cols">
+  <div class="card"><h3>Add admin</h3><form method="post" action="{{ url_for('add_admin') }}" autocomplete="off">
+    <label>Username</label><input name="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+" required>
+    <label>Password</label><input type="password" name="password" minlength="6" required>
+    <button class="btn block">👤 Add Admin</button></form></div>
+  <div class="card"><h3>Admins</h3>{% for a in admins %}<div class="item"><div>{{ a.username }}{% if a.id == session.user_id %} <small>(you)</small>{% endif %}</div><form method="post" action="{{ url_for('delete_item', kind='admin', item_id=a.id) }}" onsubmit="return confirm('Delete?')"><button class="btn red sm">🗑️</button></form></div>{% endfor %}</div>
+</div></div>
+
+<div class="pane {{ 'on' if tab == 'system' }}" id="system"><div class="card" style="max-width:480px">
+  <h3>System settings</h3><form method="post" action="{{ url_for('update_system') }}">
+    <label>Max waiting tokens per branch per day</label><input type="number" name="max_queue" min="1" max="1000" value="{{ max_queue }}" required>
+    <div class="hint">New bookings are rejected once a branch reaches this limit.</div>
+    <button class="btn block">💾 Save</button></form></div></div>
+
+<script>
+const tabs = document.querySelectorAll('.tabs button'), panes = document.querySelectorAll('.pane');
+tabs.forEach(b => b.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.toggle('on', x === b));
+  panes.forEach(p => p.classList.toggle('on', p.id === b.dataset.tab));
+}));
+</script>
+{% endblock %}

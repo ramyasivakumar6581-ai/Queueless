@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>🗂️ Reports</h1>
+<form class="card filters noprint" method="get">
+  <div><label>📅 Date</label><input type="date" name="date" value="{{ f.date }}"></div>
+  <div><label>🏛 Branch</label><select name="branch"><option value="">All branches</option>
+    {% for b in branches %}<option {{ 'selected' if f.branch == b }}>{{ b }}</option>{% endfor %}</select></div>
+  <div><label>Status</label><select name="status"><option value="">All</option>
+    {% for s in ['ACTIVE', 'FINISHED', 'CANCELED'] %}<option value="{{ s }}" {{ 'selected' if f.status|upper == s }}>{{ STATUS_LABEL[s] }}</option>{% endfor %}</select></div>
+  <button class="btn" type="submit">Filter</button>
+  <a class="btn ghost" href="{{ url_for('export_reports', **f) }}">⬇ CSV</a>
+  <button class="btn ghost" type="button" onclick="window.print()">🖨 Print / PDF</button>
+</form>
+<div class="grid">
+  <div class="card stat"><b>{{ rows|length }}</b><span>Tokens</span></div>
+  <div class="card stat ACTIVE"><b>{{ counts.ACTIVE }}</b><span>Waiting</span></div>
+  <div class="card stat FINISHED"><b>{{ counts.FINISHED }}</b><span>Served</span></div>
+  <div class="card stat CANCELED"><b>{{ counts.CANCELED }}</b><span>Canceled</span></div>
+</div>
+<div class="card scroll">
+  <table class="tbl"><thead><tr><th>#</th><th>User</th><th>Bank</th><th>Branch</th><th>Service</th><th>Slot</th><th>Status</th><th class="noprint">Action</th></tr></thead><tbody>
+  {% for r in rows %}<tr><td>{{ r.id }}</td><td>{{ r.username }}</td><td>{{ r.bank }}</td><td>{{ r.branch }}</td><td>{{ r.service }}</td>
+    <td>{{ r.token_date }} {{ r.token_time }}</td><td><span class="badge {{ r.status }}">{{ STATUS_LABEL[r.status] }}</span></td>
+    <td class="noprint">{% if r.status == 'ACTIVE' %}
+      <form method="post" action="{{ url_for('token_action', token_id=r.id, action='serve') }}" style="display:inline"><button class="btn green sm">Serve</button></form>
+      <form method="post" action="{{ url_for('token_action', token_id=r.id, action='cancel') }}" style="display:inline" onsubmit="return confirm('Cancel token #{{ r.id }}?')"><button class="btn red sm">Cancel</button></form>
+    {% else %}—{% endif %}</td></tr>
+  {% else %}<tr><td colspan="8" class="empty">No tokens match these filters.</td></tr>{% endfor %}</tbody></table>
+</div>
+{% endblock %}

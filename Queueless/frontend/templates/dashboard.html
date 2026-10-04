@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Welcome, {{ session.username }} 👋</h1>
+<h3>{{ heading }}</h3>
+<div class="grid">
+  {% for label, key in [('Total', 'total'), ('Waiting', 'ACTIVE'), ('Served', 'FINISHED'), ('Canceled', 'CANCELED')] %}
+  <div class="card stat {{ key }}"><b>{{ stats[key] }}</b><span>{{ label }}</span></div>
+  {% endfor %}
+</div>
+<div class="grid">
+  {% for icon, title, desc, endpoint, args in tiles %}
+  <a class="card tile" href="{{ url_for(endpoint, **args) }}"><div class="ic">{{ icon }}</div><h3>{{ title }}</h3><p>{{ desc }}</p></a>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My Tokens{% endblock %}
+{% block head %}<meta http-equiv="refresh" content="30">{% endblock %}
+{% block content %}
+<h1>🎟️ My Tokens</h1>
+<div class="pills">
+  <a href="{{ url_for('view_token') }}" class="{{ 'on' if not status }}">All</a>
+  {% for s in ['ACTIVE', 'FINISHED', 'CANCELED'] %}<a href="{{ url_for('view_token', status=s) }}" class="{{ 'on' if status == s }}">{{ STATUS_LABEL[s] }}</a>{% endfor %}
+</div>
+{% if not tokens %}
+  <div class="card empty">No tokens found.<br><br><a class="btn" href="{{ url_for('book_token') }}">Book a token</a></div>
+{% else %}
+<div class="grid">
+  {% for t in tokens %}
+  <div class="card tok">
+    <div class="top"><span class="num">#{{ t.id }}</span><span class="badge {{ t.status }}">{{ STATUS_LABEL[t.status] }}</span></div>
+    <dl class="kv">
+      <dt>🏦 Bank</dt><dd>{{ t.bank }}</dd>
+      <dt>🏛 Branch</dt><dd>{{ t.branch }}</dd>
+      <dt>📍 Place</dt><dd>{{ t.place }}, {{ t.district }}</dd>
+      <dt>🔧 Service</dt><dd>{{ t.service }}</dd>
+      <dt>📅 Slot</dt><dd>{{ t.token_date }} · {{ t.token_time }}</dd>
+    </dl>
+    {% if t.status == 'ACTIVE' %}
+      <div class="queue">{% if t.ahead == 0 %}You are next! 🎉{% else %}{{ t.ahead }} ahead of you · about {{ t.ahead * avg_min }} min{% endif %}</div>
+      <form method="post" action="{{ url_for('cancel_token', token_id=t.id) }}" onsubmit="return confirm('Cancel token #{{ t.id }}?')">
+        <button class="btn red sm" type="submit">Cancel Token</button></form>
+    {% else %}
+      <form method="post" action="{{ url_for('delete_token', token_id=t.id) }}" onsubmit="return confirm('Remove token #{{ t.id }} from your history?')">
+        <button class="btn ghost sm" type="submit">🗑️ Remove</button></form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

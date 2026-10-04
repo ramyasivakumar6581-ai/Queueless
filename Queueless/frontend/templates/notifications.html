@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<h1>🔔 Notifications</h1>
+{% if session.role == 'admin' %}
+<div class="cols">
+  <div class="card"><h3>📢 Send a notification</h3>
+    <form method="post" action="{{ url_for('send_notification') }}">
+      <label>Token number</label><input type="number" name="token_id" min="1" placeholder="e.g. 12" required>
+      <div class="hint">The notification goes to the customer who owns this token.</div>
+      <label>Title</label><input name="title" maxlength="80" required>
+      <label>Message</label><textarea name="message" rows="4" maxlength="300" required></textarea>
+      <button class="btn block" type="submit">Send</button>
+    </form></div>
+  <div class="card"><h3>Recently sent</h3>
+    {% for n in sent %}<div class="item"><div><b>{{ n.title }}</b><br><small>To {{ n.username }} · token #{{ n.token_id }} · {{ n.created_at }}</small></div></div>
+    {% else %}<p class="empty">Nothing sent yet.</p>{% endfor %}</div>
+</div>
+{% else %}
+<div class="card">
+  {% for n in inbox %}<div class="item"><div><b>{{ n.title }}</b><p>{{ n.message }}</p><small>{{ n.created_at }}{% if n.token_id %} · token #{{ n.token_id }}{% endif %}</small></div></div>
+  {% else %}<p class="empty">You have no notifications yet.</p>{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

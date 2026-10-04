@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<h1>📊 Analytics</h1>
+<div class="grid">
+  <div class="card stat"><b>{{ overall.total }}</b><span>All tokens</span></div>
+  <div class="card stat"><b>{{ today_counts.total }}</b><span>Booked for today</span></div>
+  <div class="card stat ACTIVE"><b>{{ overall.ACTIVE }}</b><span>Waiting</span></div>
+  <div class="card stat FINISHED"><b>{{ overall.FINISHED }}</b><span>Served</span></div>
+  <div class="card stat CANCELED"><b>{{ overall.CANCELED }}</b><span>Canceled</span></div>
+</div>
+<div class="cols">
+  <div class="card"><h3>🏦 Bank wise</h3>
+    {% for r in by_bank %}<div style="margin:10px 0"><b>{{ r.bank }}</b> <small>({{ r.total }})</small>
+      <div class="bar"><i style="width:{{ r.total * 100 // overall.total }}%"></i></div></div>
+    {% else %}<p class="empty">No data yet.</p>{% endfor %}</div>
+  <div class="card"><h3>🔧 Service wise</h3>
+    {% for r in by_service %}<div style="margin:10px 0"><b>{{ r.service }}</b> <small>({{ r.total }})</small>
+      <div class="bar"><i style="width:{{ r.total * 100 // overall.total }}%"></i></div></div>
+    {% else %}<p class="empty">No data yet.</p>{% endfor %}</div>
+</div>
+<div class="card scroll" style="margin-top:20px"><h3>🏛 Branch performance</h3>
+  <table class="tbl"><thead><tr><th>Bank</th><th>Branch</th><th>Total</th><th>Waiting</th><th>Served</th><th>Canceled</th><th>Completion</th></tr></thead><tbody>
+  {% for r in by_branch %}<tr><td>{{ r.bank }}</td><td>{{ r.branch }}</td><td>{{ r.total }}</td><td>{{ r.active }}</td><td>{{ r.finished }}</td><td>{{ r.canceled }}</td><td>{{ r.finished * 100 // r.total }}%</td></tr>
+  {% else %}<tr><td colspan="7" class="empty">No tokens booked yet.</td></tr>{% endfor %}</tbody></table>
+</div>
+{% endblock %}
